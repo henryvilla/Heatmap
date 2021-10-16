@@ -7,7 +7,8 @@
     </a>
     <ul class="treeview-menu">
         <li><a href="../../pages/heatmap/heatmap.php"><i class="fa fa-circle-o"></i>Control Heatmap</a></li>
-        <li><a href="../../pages/Indicadores/indicadores.php"><i class="fa fa-circle-o"></i>Gestión Indicadores</a></li>
+        <li><a href="../../pages/heatmap/Backlog.php"><i class="fa fa-circle-o"></i>Backlog de Atención</a></li>
+        <!-- <li><a href="../../pages/heatmap/indicadoresHeatmap.php"><i class="fa fa-circle-o"></i>Gestión Indicadores</a></li> -->
     </ul> 
 </li>
 

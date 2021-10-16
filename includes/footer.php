@@ -2,9 +2,10 @@
 
             <footer class="main-footer">
                 <div class="pull-right hidden-xs">
-                    <b>Version</b> 1.2
+                    <b>Version</b> 1.2 
                 </div>
-                <strong>Copyright &copy; 2021 <a href="endi.pe">Endi <i>#EnfoqueDigital</i></a>.</strong> Todos los Derechos Reservados.
+                <button type="button" class="btn btn-facebook" onclick="window.location.href='/Heatmap/login.php'">Iniciar Sesión</button>
+                <strong>Copyright &copy; 2021  - <i> Gerencia de Transformación de Procesos</i></strong> Todos los Derechos Reservados.
             </footer>
 
       

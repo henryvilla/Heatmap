@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <?php
-include ('../../conexionbd/session.php');
-include ('../../includes/header.php');
+include ('../../includes/header_inv.php');
 include ('../../conexionbd/connectDB.php');
 ?>
 <?php
@@ -11,14 +10,12 @@ $result = mysqli_query(DBi::$mysqli, $sql);
 $ver = mysqli_fetch_row($result);
 ?>
 
-<div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1> <i class='fa fa-edit'></i> <big><u><?php echo $ver[1]; ?></u></big></h1>
+
+   <section class="content-header">
+        <h1> <big><u>Portal Heatmap</u> <span class="logo-mini"><IMG SRC="../../assests/images/icon.PNG" WIDTH=50 HEIGHT=50></span></big></h1>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#"><i class="fa fa-home"></i>Inicio</a></li>
-            <li class="breadcrumb-item">Heatmap</li>
-            <li class="active">Proceso</li>
+            <button type="button" class="btn btn-danger" onclick="window.location.href='heatmap.php'">Heatmap</button>
+            <button type="button" class="btn btn-facebook" onclick="window.location.href='Backlog.php'">Backlog</button>
         </ol>
     </section>
 
@@ -35,10 +32,9 @@ $ver = mysqli_fetch_row($result);
                             <div class="row">
 
                                 <div class="col-md-12">
-                                    <p>Se presenta los resultados de los indicadores del proceso.</p>
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
-                                            <div class="page-heading"><i class="glyphicon glyphicon-edit"></i> Análisis del proceso </div><input id="id_proceso" value="<?php echo $id_proceso; ?>" type="hidden">
+                                            <div class="page-heading"><i class="glyphicon glyphicon-edit"></i> Análisis del proceso: <b><?php echo $ver[1]; ?> </b></div><input id="id_proceso" value="<?php echo $id_proceso; ?>" type="hidden">
                                         </div>
                                         <div class="panel-body">
 
@@ -99,7 +95,6 @@ indicadoresheatmap i JOIN evaluacion e ON e.id_indicador=i.id_indicador WHERE i.
             </div>
         </div>
     </section>
-</div> <!-- content-wrapper  -->
 <script>
 
     $(document).ready(function () {

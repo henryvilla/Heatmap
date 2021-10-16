@@ -1,7 +1,36 @@
 
 <?php
 require_once "../../../conexionbd/connectDB.php";
-$vp = $_GET['vp'];
+
+$cadenasql = "SELECT pro.id_proceso , pro.proceso, 
+(SELECT SUM(resultado_i * peso_ind)/100 FROM 
+(SELECT e.id_proceso AS id_process, if(e.resultado_i = 0, 'NC','C') AS valido, i.indicador ,e.resultado_i, i.peso_ind FROM 
+indicadoresheatmap i JOIN evaluacion e ON e.id_indicador=i.id_indicador WHERE i.situacion = 1  order BY i.tipo ASC) AS map WHERE valido ='C' AND id_process=pro.id_proceso LIMIT 6) AS valor  
+FROM procesos pro WHERE pro.id_macroproceso =";
+
+function validar_color($resultado) {
+    $resultado_red = round($resultado);
+    if ($resultado_red == 0) {
+        $color = 'background-color:#d2d6de';
+    }
+    if ($resultado_red == 1) {
+        $color = 'background-color:#dd4b39 !important';
+    }
+    if ($resultado_red == 2) {
+        $color = 'background-color:#f39c12 !important';
+    }
+    if ($resultado_red == 3) {
+        $color = 'background-color:#F1EC33 !important';
+    }
+    if ($resultado_red == 4) {
+        $color = 'background-color:#00a65a !important';
+    }
+    if ($resultado_red == 5) {
+        $color = 'background-color:#3c8dbc !important';
+    }
+    
+    return $color;
+}
 ?>
 
 <style type="text/css">
@@ -26,7 +55,7 @@ $vp = $_GET['vp'];
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPE01' and vp='$vp'";
+                                $sql = $cadenasql . "'MPE01'";
 
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
@@ -37,24 +66,7 @@ $vp = $_GET['vp'];
                                     </tr><tr>
                                         <?php
                                     }
-                                    if ($ver[2] == 0) {
-                                        $color = 'background-color:#d2d6de';
-                                    }
-                                    if ($ver[2] == 1) {
-                                        $color = 'background-color:#dd4b39 !important';
-                                    }
-                                    if ($ver[2] == 2) {
-                                        $color = 'background-color:#f39c12 !important';
-                                    }
-                                    if ($ver[2] == 3) {
-                                        $color = 'background-color:#00c0ef !important';
-                                    }
-                                    if ($ver[2] == 4) {
-                                        $color = 'background-color:#00a65a !important';
-                                    }
-                                    if ($ver[2] == 5) {
-                                        $color = 'background-color:#3c8dbc !important';
-                                    }
+                                    $color = validar_color($ver[2]);
                                     ?>
 
                                     <td>
@@ -78,18 +90,21 @@ $vp = $_GET['vp'];
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPE02' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPE02'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -108,18 +123,21 @@ $vp = $_GET['vp'];
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p JOIN vps v where id_macroproceso='MPE03' AND v.id_vp ='$vp'";
-
+                                $sql = $cadenasql . "'MPE03'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -138,18 +156,21 @@ $vp = $_GET['vp'];
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPE04' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPE04'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -180,21 +201,25 @@ $vp = $_GET['vp'];
                 <td>
                     <div class="estrategico"> 
                         <h6>Desarrollo de Productos y Servicios</h6>
-                        <table style="border: hidden; width: 100%;text-align:center;background-color:#FEFF8A;" class="table  table-condensed"">
+                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed"">
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPO01' and vp='$vp'";
+                                $sql = $cadenasql . "'MPO01'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -214,18 +239,21 @@ $vp = $_GET['vp'];
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPO02' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPO02'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -240,22 +268,25 @@ $vp = $_GET['vp'];
                 <td ROWSPAN=2>
                     <div class="estrategico">
                         <h6>Colocaciones</h6>
-                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed">
+                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed"">
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPO03' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPO03'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -270,22 +301,25 @@ $vp = $_GET['vp'];
                 <td>
                     <div class="estrategico"> 
                         <h6>Servicios</h6>
-                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed">
+                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed"">
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPO04' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPO04'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -302,22 +336,25 @@ $vp = $_GET['vp'];
                 <td>
                     <div class="estrategico"> 
                         <h6>Inversiones</h6>
-                        <table style="width: 100%;text-align:center;background-color:#FEFF8A;" class="table  table-condensed">
+                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed"">
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPO05' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPO05'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -332,22 +369,25 @@ $vp = $_GET['vp'];
                 <td>
                     <div class="estrategico"> 
                         <h6> Gestión de Canales de Atención</h6>
-                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed">
+                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed"">
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPO06' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPO06'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -362,22 +402,25 @@ $vp = $_GET['vp'];
                 <td>
                     <div class="estrategico"> 
                         <h6>Servicio de Atención al Cliente</h6>
-                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed">
+                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed"">
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPO07' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPO07'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -407,22 +450,25 @@ $vp = $_GET['vp'];
                 <td>
                     <div class="estrategico"> 
                         <h6>Gestión Documentaria</h6>
-                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed">
+                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed"">
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPS01' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPS01'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -438,22 +484,25 @@ $vp = $_GET['vp'];
                 <td>
                     <div class="estrategico"> 
                         <h6> Gestión de los Recursos Humanos</h6>
-                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed">
+                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed"">
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPS02' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPS02'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -468,22 +517,25 @@ $vp = $_GET['vp'];
                 <td>
                     <div class="estrategico"> 
                         <h6> Gestión Logística</h6>
-                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed">
+                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed"">
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPS03' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPS03'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -498,22 +550,25 @@ $vp = $_GET['vp'];
                 <td ROWSPAN=2>
                     <div class="estrategico"> 
                         <h6> Administración Financiera</h6>
-                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed">
+                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed"">
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPS04' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPS04'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -530,22 +585,25 @@ $vp = $_GET['vp'];
                 <td>
                     <div class="estrategico"> 
                         <h6>Soporte Legal</h6>
-                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed">
+                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed"">
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPS05' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPS05'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -560,22 +618,25 @@ $vp = $_GET['vp'];
                 <td>
                     <div class="estrategico"> 
                         <h6> Gestión de Tecnologías de Información</h6>
-                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed">
+                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed"">
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPS06' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPS06'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php
@@ -590,22 +651,25 @@ $vp = $_GET['vp'];
                 <td>
                     <div class="estrategico"> 
                         <h6> Gestión de la Seguridad Integral</h6>
-                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed">
+                        <table style="width: 100%;text-align:center;word-wrap:break-word;background-color:#FEFF8A;" class="table  table-condensed"">
                             <tr>
                                 <?php
                                 $cont = 0;
-                                $sql = "SELECT id_proceso AS id_process,proceso,(SELECT ROUND(AVG(e.estado)) FROM evaluacion e WHERE e.id_proceso = id_process) AS evaluation from procesos p where id_macroproceso='MPS07' and vp='$vp'";
-
+                                $sql = $cadenasql . "'MPS07'";
                                 $result = mysqli_query(DBi::$mysqli, $sql);
                                 $cant = mysqli_num_rows($result);
                                 while ($ver = mysqli_fetch_row($result)) {
                                     if ($cont % 4 == 0) {
                                         ?>
                                     </tr><tr>
-                                    <?php } ?>
+
+                                        <?php
+                                    }
+                                    $color = validar_color($ver[2]);
+                                    ?>
 
                                     <td>
-                                        <div style = "font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
+                                        <div style = "<?php echo $color; ?> ; font-size: 6px;border-style: groove; width:100%; height:25px; display: flex;align-items: center;justify-content: center;" onclick="location.href = 'proceso.php?id_proceso=<?php echo $ver[0]; ?>'"><?php echo $ver[1]; ?></div>
                                     </td>
 
                                     <?php

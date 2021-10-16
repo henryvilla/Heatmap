@@ -1,12 +1,17 @@
-
 <?php
 require_once "../../../conexionbd/connectDB.php";
+$vp = $_GET['vp'];
+if($vp !== ""){
+    $filtro_vp = "pro.vp =$vp and";
+}else {
+    $filtro_vp = "";
+}
 
 $cadenasql = "SELECT pro.id_proceso , pro.proceso, 
 (SELECT SUM(resultado_i * peso_ind)/100 FROM 
 (SELECT e.id_proceso AS id_process, if(e.resultado_i = 0, 'NC','C') AS valido, i.indicador ,e.resultado_i, i.peso_ind FROM 
 indicadoresheatmap i JOIN evaluacion e ON e.id_indicador=i.id_indicador WHERE i.situacion = 1  order BY i.tipo ASC) AS map WHERE valido ='C' AND id_process=pro.id_proceso LIMIT 6) AS valor  
-FROM procesos pro WHERE pro.id_macroproceso =";
+FROM procesos pro WHERE ".$filtro_vp." pro.id_macroproceso =";
 
 function validar_color($resultado) {
     $resultado_red = round($resultado);

@@ -11,7 +11,8 @@ and open the template in the editor.
         <title>Portal de procesos | Heatmap</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width">
-        <meta http-equiv="Refresh" content="0;url=login.php">
+        <!--<meta http-equiv="Refresh" content="0;url=login.php"> -->
+        <meta http-equiv="Refresh" content="0;url=pages/heatmap_invitados/heatmap.php"> 
     </head>
     <body>
     </body>

@@ -1,6 +1,5 @@
 
 <?php
-session_start();
 include ('../../conexionbd/session.php');
 include ('../../includes/header.php');
 include ('../../conexionbd/connectDB.php');

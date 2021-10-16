@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php
-include ('../../conexionbd/session.php');
-include ('../../includes/header.php');
+
+include ('../../includes/header_inv.php');
 include ('../../conexionbd/connectDB.php');
 ?>
 <script src="../../pages/heatmap/js/funciones.js"></script> 
@@ -9,14 +9,13 @@ include ('../../conexionbd/connectDB.php');
 <!-- ******   CUERPO DEL PROGRAMAAAAAA *******************************************-->
 
 <!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
+
 
 
     <section class="content-header">
-        <h1> <i class='fa fa-edit'></i> <big><u>Heatmap</u></big></h1>
+        <h1> <big><u>Portal Heatmap</u> <span class="logo-mini"><IMG SRC="../../assests/images/icon.PNG" WIDTH=50 HEIGHT=50></span></big></h1>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#"><i class="fa fa-home"></i>Inicio</a></li>
-            <li class="active">Heatmap</li>
+            <button type="button" class="btn btn-facebook" onclick="window.location.href='Backlog.php'">Backlog</button>
         </ol>
     </section>
 
@@ -31,11 +30,11 @@ include ('../../conexionbd/connectDB.php');
                     <div class="panel panel-default">
 
                         <div class="panel-heading">
-                            <div class="page-heading"><i class="glyphicon glyphicon-edit"></i> Mapa de Calor de los procesos del Banco </div>
+                            <div class="page-heading"><i class="glyphicon glyphicon-edit"></i> Heatmap de Procesos de Negocio </div>
                         </div> <!-- /panel-heading -->
 
                         <div class="panel-body">
-                            <div class="col-lg-3">
+                            <div class="col-lg-4 col-md-4">
                                 <p><font color="darkblue">Vicepresidencia: </font></p>
                                 <select id="selectvp" onchange="cambioheatmap('selectvp')" class="form-control select2" style="width: 100%;">                      
                                     <option value=""selected  hidden>Todos</option>
@@ -60,7 +59,7 @@ include ('../../conexionbd/connectDB.php');
     </section>
 
 
-</div>
+
 <script>
 
     $(document).ready(function () {
